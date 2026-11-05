@@ -28,7 +28,8 @@
 .nav-bar__inner::-webkit-scrollbar {
   display: none;
 }
-.nav-bar__left {
+.nav-bar__left,
+.nav-bar__right {
   display: flex;
   flex: none;
 }

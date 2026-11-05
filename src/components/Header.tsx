@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate, type To } from 'react-router-dom'
-import { Bell, ChevronsUpDown, CircleCheck, Database, FilePenLine, House, ListChecks, LogOut, RotateCcw, Search, User, type LucideIcon } from 'lucide-react'
+import { Bell, ChevronsUpDown, CircleCheck, Database, FilePenLine, House, ListChecks, LogOut, RotateCcw, Search, SquareTerminal, User, type LucideIcon } from 'lucide-react'
 import logo from '../assets/bpkp/logo-bpkp.png'
 import { usePopover } from '../hooks/usePopover'
 import { useDialogs } from './Dialogs'
@@ -29,6 +29,8 @@ const ROLE_NAV: Record<Role, NavItem> = {
   'Produsen Data': { key: 'role', label: 'Dataset Saya', to: { pathname: '/', hash: '#dataset-saya' }, icon: Database },
   Walidata: { key: 'role', label: 'Verifikasi Data', to: { pathname: '/', hash: '#antrean' }, icon: ListChecks },
 }
+
+const CONSOLE_URL = 'https://sitomat-v2.sicabe.com'
 
 const POPULAR = ['SPIP', 'Kapabilitas APIP', 'Dana Desa', 'Pengadaan']
 
@@ -329,7 +331,15 @@ export function Header() {
       <nav className="nav-bar" aria-label="Navigasi utama">
         <div className="nav-bar__inner">
           <div className="nav-bar__left">{SHARED.map((n) => tab(n))}</div>
-          {tab(roleNav, true)}
+          <div className="nav-bar__right">
+            {tab(roleNav, true)}
+            {role === 'Walidata' && (
+              <a href={CONSOLE_URL} target="_blank" rel="noopener noreferrer" className="nav-bar__item nav-bar__item--role">
+                <SquareTerminal size={18} aria-hidden="true" />
+                Console
+              </a>
+            )}
+          </div>
         </div>
       </nav>
     </header>
