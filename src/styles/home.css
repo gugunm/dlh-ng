@@ -28,7 +28,7 @@
 
 /* ---------- hero ---------- */
 .hero {
-  background: linear-gradient(100deg, #1b2253 5.37%, #23277b 94.63%);
+  background: linear-gradient(100.566deg, #1b2253 5.623%, #23277b 94.377%);
   color: #fff;
 }
 .hero__content {
@@ -333,13 +333,6 @@
 }
 
 /* ---------- requests table ---------- */
-.requests {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-top: 56px;
-  padding-bottom: 24px;
-}
 .table {
   border: 1px solid var(--border);
   border-radius: 12px;
