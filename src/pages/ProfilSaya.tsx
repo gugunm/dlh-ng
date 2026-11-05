@@ -426,7 +426,7 @@ export default function ProfilSaya() {
             id="peran"
             icon={BadgeCheck}
             title="Peran & Hak Akses"
-            description="Peran ditetapkan oleh administrator. Anda dapat berganti peran kapan saja dari menu pengguna."
+            description="Peran ditetapkan oleh administrator. Anda dapat berganti peran kapan saja dari menu pengguna atau dengan menekan Shift + R."
           >
             <div className="prof-roles">
               {ROLE_ORDER.map((r) => {

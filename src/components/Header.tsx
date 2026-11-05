@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation, useNavigate, type To } from 'react-router-dom'
 import { Bell, ChevronsUpDown, CircleCheck, Database, FilePenLine, House, ListChecks, LogOut, RotateCcw, Search, SquareTerminal, User, type LucideIcon } from 'lucide-react'
 import logo from '../assets/bpkp/logo-bpkp.png'
 import { usePopover } from '../hooks/usePopover'
 import { useDialogs } from './Dialogs'
+import { SearchPalette } from './SearchPalette'
 import { useToast } from './Toast'
 import { useRequests } from '../hooks/useRequests'
 import { useWorkflow } from '../hooks/useWorkflow'
@@ -31,8 +33,6 @@ const ROLE_NAV: Record<Role, NavItem> = {
 }
 
 const CONSOLE_URL = 'https://sitomat-v2.sicabe.com'
-
-const POPULAR = ['SPIP', 'Kapabilitas APIP', 'Dana Desa', 'Pengadaan']
 
 const NOTIFICATIONS = [
   {
@@ -63,6 +63,14 @@ const ROLE_HASH: Partial<Record<Role, string>> = {
   Walidata: '#antrean',
 }
 
+/** True when a global shortcut should stay quiet: a modifier, a held key, typing, or an open dialog. */
+const shortcutBlocked = (e: KeyboardEvent) => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || e.defaultPrevented) return true
+  const t = e.target as HTMLElement | null
+  if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return true
+  return !!document.querySelector('[role="dialog"]')
+}
+
 function useActiveNav(role: Role): string {
   const { pathname, hash } = useLocation()
   if (pathname === '/') return hash === ROLE_HASH[role] ? 'role' : 'beranda'
@@ -82,42 +90,44 @@ export function Header() {
   const { reset } = useRequests()
   const workflow = useWorkflow()
 
-  const search = usePopover()
-  const searchInput = useRef<HTMLInputElement>(null)
-  const { setOpen: setSearchOpen } = search
+  const bell = usePopover()
+  const user = usePopover()
+  const { close: closeBell, toggle: toggleBell } = bell
+  const bellButton = useRef<HTMLButtonElement>(null)
+  const { close: closeUser } = user
+
+  const [searchOpen, setSearchOpen] = useState(false)
+  const openSearch = useCallback(() => {
+    closeBell()
+    closeUser()
+    setSearchOpen(true)
+  }, [closeBell, closeUser])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
-      const t = e.target as HTMLElement | null
-      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return
-      if (document.querySelector('[role="dialog"]')) return
+      if (e.key !== '/' || shortcutBlocked(e)) return
       e.preventDefault()
-      setSearchOpen(true)
-      searchInput.current?.focus()
-      searchInput.current?.select()
+      openSearch()
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [setSearchOpen])
-  const bell = usePopover()
-  const user = usePopover()
+  }, [openSearch])
 
-  const [query, setQuery] = useState('')
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== 'n' || e.shiftKey || shortcutBlocked(e)) return
+      e.preventDefault()
+      closeUser()
+      toggleBell()
+      // Keeps Tab order running from the bell into the panel for keyboard users.
+      bellButton.current?.focus()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [closeUser, toggleBell])
+
   const [read, setRead] = useState<Set<string>>(new Set())
   const unread = NOTIFICATIONS.filter((n) => !read.has(n.id)).length
-
-  const submitSearch = (e: FormEvent) => {
-    e.preventDefault()
-    const q = query.trim()
-    search.close()
-    navigate(q ? `/dataset?q=${encodeURIComponent(q)}` : '/dataset')
-  }
-
-  const runPopular = (q: string) => {
-    search.close()
-    navigate(`/dataset?q=${encodeURIComponent(q)}`)
-  }
 
   const openNotification = (n: (typeof NOTIFICATIONS)[number]) => {
     setRead((s) => new Set(s).add(n.id))
@@ -147,8 +157,20 @@ export function Header() {
     if (next === role) return
     switchRole(next)
     navigate('/')
-    toast.show(`Peran diganti menjadi ${next}.`, 'success')
+    toast.show(`Peran diganti menjadi ${next}. Tekan Shift + R untuk beralih ke peran berikutnya.`, 'success')
   }
+
+  // No dependency array: the handler must always see the current role.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== 'r' || !e.shiftKey || shortcutBlocked(e)) return
+      e.preventDefault()
+      const index = ROLES.findIndex((r) => r.role === role)
+      chooseRole(ROLES[(index + 1) % ROLES.length].role)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  })
 
   const signOut = () => {
     user.close()
@@ -170,56 +192,33 @@ export function Header() {
         </Link>
 
         <div className="actions">
-          <div className="popover search-pop" ref={search.ref}>
-            <button
-              type="button"
-              className="round-btn"
-              aria-label="Cari"
-              title="Cari (tekan /)"
-              aria-keyshortcuts="/"
-              aria-expanded={search.open}
-              onClick={search.toggle}
-            >
-              <Search size={18} />
-            </button>
-            {search.open && (
-              <div className="popover__panel popover__panel--search">
-                <form onSubmit={submitSearch} className="quick-search">
-                  <Search size={18} />
-                  <input
-                    ref={searchInput}
-                    autoFocus
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Cari dataset, publikasi, atau visualisasi…"
-                    aria-label="Kata kunci"
-                  />
-                  <kbd className="kbd" aria-hidden="true">/</kbd>
-                  <button type="submit" className="btn btn--red btn--sm">
-                    Cari
-                  </button>
-                </form>
-                <div className="quick-search__popular">
-                  <span>Pencarian populer:</span>
-                  {POPULAR.map((p) => (
-                    <button key={p} type="button" className="chip-light" onClick={() => runPopular(p)}>
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <button
+            type="button"
+            className="round-btn round-btn--kbd"
+            aria-label="Cari"
+            title="Cari (tekan /)"
+            aria-keyshortcuts="/"
+            aria-haspopup="dialog"
+            aria-expanded={searchOpen}
+            onClick={openSearch}
+          >
+            <Search size={18} />
+            <kbd className="kbd kbd--sm round-btn__kbd" aria-hidden="true">/</kbd>
+          </button>
 
           <div className="popover" ref={bell.ref}>
             <button
               type="button"
-              className="round-btn"
+              ref={bellButton}
+              className="round-btn round-btn--kbd"
               aria-label={`Notifikasi${unread ? `, ${unread} belum dibaca` : ''}`}
+              title="Notifikasi (tekan N)"
+              aria-keyshortcuts="N"
               aria-expanded={bell.open}
               onClick={bell.toggle}
             >
               <Bell size={18} />
+              <kbd className="kbd kbd--sm round-btn__kbd" aria-hidden="true">N</kbd>
               {unread > 0 && <span className="round-btn__dot" />}
             </button>
             {bell.open && (
@@ -258,8 +257,10 @@ export function Header() {
             <button
               type="button"
               className="user-menu"
+              title="Menu pengguna (Shift + R untuk ganti peran)"
               aria-haspopup="menu"
               aria-expanded={user.open}
+              aria-keyshortcuts="Shift+R"
               onClick={user.toggle}
             >
               <span className="avatar">{USER.initials}</span>
@@ -278,8 +279,12 @@ export function Header() {
                     <span>{USER.unit}</span>
                   </div>
                 </div>
-                <div className="role-label" id="ganti-peran">
-                  GANTI PERAN
+                <div className="role-label">
+                  <span id="ganti-peran">GANTI PERAN</span>
+                  <span className="role-label__hint" aria-label="Pintasan: Shift + R">
+                    <kbd className="kbd kbd--sm">Shift</kbd>
+                    <kbd className="kbd kbd--sm">R</kbd>
+                  </span>
                 </div>
                 <div className="role-list" role="group" aria-labelledby="ganti-peran">
                   {ROLES.map(({ role: r, description, icon: Icon }) => (
@@ -363,6 +368,7 @@ export function Header() {
           </div>
         </div>
       </nav>
+      {searchOpen && createPortal(<SearchPalette onClose={() => setSearchOpen(false)} />, document.body)}
     </header>
   )
 }

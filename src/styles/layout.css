@@ -160,57 +160,6 @@
   color: var(--bpkp-accent);
 }
 
-.popover__panel--search {
-  width: min(520px, calc(100vw - 32px));
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.quick-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 6px 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--text-muted);
-}
-.quick-search:focus-within {
-  border-color: var(--bpkp-accent);
-  box-shadow: 0 0 0 3px rgba(43, 72, 139, 0.15);
-}
-.quick-search input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--bpkp-primary);
-  background: transparent;
-}
-.quick-search__popular {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-.chip-light {
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--bpkp-primary);
-  font-size: 12px;
-  font-weight: 600;
-}
-.chip-light:hover {
-  background: var(--sky-tint);
-  color: var(--bpkp-accent);
-}
 
 .popover__panel--bell {
   width: min(380px, calc(100vw - 32px));
@@ -543,4 +492,30 @@
   color: var(--text-muted);
   font: 700 12px/1 inherit;
   font-family: inherit;
+}
+.kbd--sm {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10.5px;
+}
+.round-btn__kbd {
+  display: none;
+}
+/* Only where a keyboard is likely and the header has room for the wider button. */
+@media (hover: hover) and (min-width: 821px) {
+  .round-btn--kbd {
+    grid-auto-flow: column;
+    gap: 8px;
+    width: auto;
+    padding: 0 11px 0 12px;
+    border-radius: 20px;
+  }
+  .round-btn--kbd .round-btn__dot {
+    right: auto;
+    left: 21px;
+  }
+  .round-btn__kbd {
+    display: inline-grid;
+  }
 }
