@@ -1,6 +1,6 @@
-# Katalog Data BPKP Portal
+# Katalog Data Portal
 
-Frontend prototype for the BPKP data catalog (Katalog Data), built with React, TypeScript, and Vite.
+Frontend prototype for the data catalog (Katalog Data), built with React, TypeScript, and Vite.
 
 The app has no backend. It uses sample data, login is simulated, and changes are saved in your browser's `localStorage`.
 
