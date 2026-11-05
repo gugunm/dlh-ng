@@ -13,6 +13,10 @@ export const USER = {
   name: 'Sari Wulandari',
   initials: 'SW',
   unit: 'Deputi Bidang Pengawasan Penyelenggaraan Keuangan Daerah',
+  position: 'Auditor Ahli Muda',
+  nip: '198804122015032004',
+  email: 'sari.wulandari@bpkp.go.id',
+  phone: '0812-3456-7890',
 }
 
 const KEY = 'dlh-katalog-auth-v1'

@@ -529,3 +529,18 @@
     padding: 13px 16px;
   }
 }
+
+.kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: 700 12px/1 inherit;
+  font-family: inherit;
+}

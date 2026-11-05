@@ -114,10 +114,10 @@ function RequestFormDialog({ itemId }: { itemId?: string }) {
     if (!valid) return
     const item = itemById(selected)
     if (!item) return
-    add({ itemId: item.id, title: item.title, purpose: purpose.trim(), unit: unit.trim() })
+    const req = add({ itemId: item.id, title: item.title, purpose: purpose.trim(), unit: unit.trim() })
     close()
-    toast.show('Permohonan diajukan. Pantau statusnya di “Permohonan Informasi Saya”.')
-    navigate({ pathname: '/', hash: '#permohonan' })
+    toast.show('Permohonan diajukan. Pantau statusnya di “Permohonan Saya”.')
+    navigate(`/permohonan?id=${req.id}`)
   }
 
   const showErr = (k: keyof typeof errors) =>

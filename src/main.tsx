@@ -13,6 +13,8 @@ import './styles/detail.css'
 import './styles/roles.css'
 import './styles/masuk.css'
 import './styles/lists.css'
+import './styles/permohonan.css'
+import './styles/profil.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(

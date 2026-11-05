@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate, type To } from 'react-router-dom'
 import { Bell, ChevronsUpDown, CircleCheck, Database, FilePenLine, House, ListChecks, LogOut, RotateCcw, Search, SquareTerminal, User, type LucideIcon } from 'lucide-react'
 import logo from '../assets/bpkp/logo-bpkp.png'
@@ -25,7 +25,7 @@ const SHARED: NavItem[] = [
 ]
 
 const ROLE_NAV: Record<Role, NavItem> = {
-  'Pengguna Data': { key: 'role', label: 'Permohonan Saya', to: { pathname: '/', hash: '#permohonan' }, icon: FilePenLine },
+  'Pengguna Data': { key: 'role', label: 'Permohonan Saya', to: '/permohonan', icon: FilePenLine },
   'Produsen Data': { key: 'role', label: 'Dataset Saya', to: { pathname: '/', hash: '#dataset-saya' }, icon: Database },
   Walidata: { key: 'role', label: 'Verifikasi Data', to: { pathname: '/', hash: '#antrean' }, icon: ListChecks },
 }
@@ -58,8 +58,7 @@ const NOTIFICATIONS = [
   },
 ] as const
 
-const ROLE_HASH: Record<Role, string> = {
-  'Pengguna Data': '#permohonan',
+const ROLE_HASH: Partial<Record<Role, string>> = {
   'Produsen Data': '#dataset-saya',
   Walidata: '#antrean',
 }
@@ -67,9 +66,10 @@ const ROLE_HASH: Record<Role, string> = {
 function useActiveNav(role: Role): string {
   const { pathname, hash } = useLocation()
   if (pathname === '/') return hash === ROLE_HASH[role] ? 'role' : 'beranda'
+  if (pathname.startsWith('/permohonan')) return 'role'
   if (pathname.startsWith('/produsen')) return 'produsen'
   if (pathname.startsWith('/pemanfaatan')) return 'pemanfaatan'
-  return 'dataset'
+  return pathname.startsWith('/dataset') ? 'dataset' : ''
 }
 
 export function Header() {
@@ -83,6 +83,23 @@ export function Header() {
   const workflow = useWorkflow()
 
   const search = usePopover()
+  const searchInput = useRef<HTMLInputElement>(null)
+  const { setOpen: setSearchOpen } = search
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return
+      const t = e.target as HTMLElement | null
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return
+      if (document.querySelector('[role="dialog"]')) return
+      e.preventDefault()
+      setSearchOpen(true)
+      searchInput.current?.focus()
+      searchInput.current?.select()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [setSearchOpen])
   const bell = usePopover()
   const user = usePopover()
 
@@ -158,6 +175,8 @@ export function Header() {
               type="button"
               className="round-btn"
               aria-label="Cari"
+              title="Cari (tekan /)"
+              aria-keyshortcuts="/"
               aria-expanded={search.open}
               onClick={search.toggle}
             >
@@ -168,12 +187,14 @@ export function Header() {
                 <form onSubmit={submitSearch} className="quick-search">
                   <Search size={18} />
                   <input
+                    ref={searchInput}
                     autoFocus
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Cari dataset, publikasi, atau visualisasi…"
                     aria-label="Kata kunci"
                   />
+                  <kbd className="kbd" aria-hidden="true">/</kbd>
                   <button type="submit" className="btn btn--red btn--sm">
                     Cari
                   </button>
@@ -291,7 +312,7 @@ export function Header() {
                   role="menuitem"
                   onClick={() => {
                     user.close()
-                    toast.show('Profil belum tersedia pada prototipe ini.', 'info')
+                    navigate('/profil')
                   }}
                 >
                   <User size={16} /> Profil Saya
@@ -302,7 +323,7 @@ export function Header() {
                   onClick={() => {
                     user.close()
                     if (role !== 'Pengguna Data') switchRole('Pengguna Data')
-                    navigate({ pathname: '/', hash: '#permohonan' })
+                    navigate('/permohonan')
                   }}
                 >
                   <FilePenLine size={16} /> Permohonan Saya

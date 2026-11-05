@@ -20,6 +20,8 @@ import DetailDataset from "./pages/DetailDataset";
 import HasilPencarian from "./pages/HasilPencarian";
 import DaftarProdusen from "./pages/DaftarProdusen";
 import Pemanfaatan from "./pages/Pemanfaatan";
+import PermohonanSaya from "./pages/PermohonanSaya";
+import ProfilSaya from "./pages/ProfilSaya";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -66,6 +68,8 @@ export default function App() {
                     <Route path="dataset/:id" element={<DetailDataset />} />
                     <Route path="produsen" element={<DaftarProdusen />} />
                     <Route path="pemanfaatan" element={<Pemanfaatan />} />
+                    <Route path="permohonan" element={<PermohonanSaya />} />
+                    <Route path="profil" element={<ProfilSaya />} />
                     <Route
                       path="publikasi"
                       element={

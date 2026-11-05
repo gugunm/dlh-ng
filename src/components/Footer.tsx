@@ -32,7 +32,7 @@ export function Footer() {
           <Link to="/pemanfaatan">Pemanfaatan Data</Link>
           <Link to="/dataset?jenis=Publikasi">Publikasi</Link>
           <Link to="/dataset?jenis=Visualisasi">Visualisasi</Link>
-          <Link to={{ pathname: '/', hash: '#permohonan' }}>Permohonan Informasi Saya</Link>
+          <Link to="/permohonan">Permohonan Saya</Link>
           <Link to={{ pathname: '/', hash: '#sdi' }}>Prinsip Satu Data Indonesia</Link>
         </div>
       )}

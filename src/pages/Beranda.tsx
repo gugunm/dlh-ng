@@ -8,7 +8,6 @@ import {
   ChartColumn,
   Database,
   Download,
-  FilePenLine,
   FileText,
   House,
   Landmark,
@@ -21,12 +20,11 @@ import {
   Target,
   type LucideIcon,
 } from 'lucide-react'
-import { TYPE_ICONS, StatusBadge } from '../components/Badges'
+import { TYPE_ICONS } from '../components/Badges'
 import { Mascot } from '../components/Mascot'
 import { useDialogs } from '../components/Dialogs'
 import { useToast } from '../components/Toast'
 import { CATALOG, CONTENT_TYPES, HOME_FEATURED_IDS, itemById, type CatalogItem } from '../data/catalog'
-import { useRequests, type InfoRequest } from '../hooks/useRequests'
 import { downloadTextFile, fmtDate, slug } from '../lib/format'
 
 const POPULAR = ['SPIP', 'Kapabilitas APIP', 'Dana Desa', 'Pengadaan']
@@ -151,7 +149,6 @@ export default function Beranda() {
   const location = useLocation()
   const dialogs = useDialogs()
   const toast = useToast()
-  const { requests } = useRequests()
 
   const [q, setQ] = useState('')
   const [tab, setTab] = useState<Tab>('Semua')
@@ -178,15 +175,6 @@ export default function Beranda() {
       .slice(0, 8)
   }, [tab])
 
-  const requestAction = (r: InfoRequest) => {
-    if (r.status === 'Disetujui') {
-      const item = itemById(r.itemId)
-      if (item) dialogs.downloadItem(item)
-    } else dialogs.openStatus(r.id)
-  }
-  const actionLabel = (r: InfoRequest) =>
-    r.status === 'Diproses' ? 'Lihat Status' : r.status === 'Disetujui' ? 'Unduh Data' : 'Lihat Alasan'
-
   const sdi = SDI.find((s) => s.key === sdiKey) ?? SDI[0]
 
   const downloadRef = (title: string) => {
@@ -206,7 +194,7 @@ export default function Beranda() {
             <h1>Selamat datang, Sari Wulandari</h1>
             <p className="hero__desc">
               Temukan dataset, publikasi, dan visualisasi pengawasan. Untuk data bersifat terbatas, ajukan
-              permohonan informasi dan pantau statusnya di sini.
+              permohonan informasi dan pantau statusnya di Permohonan Saya.
             </p>
             <form className="hero-search" onSubmit={onSearch} role="search">
               <Search size={20} />
@@ -311,55 +299,6 @@ export default function Beranda() {
         <div className="cards" role="tabpanel">
           {cards.map((c) => (
             <ContentCard key={c.id} item={c} onOpen={dialogs.openItem} />
-          ))}
-        </div>
-      </section>
-
-      <section className="section requests" id="permohonan">
-        <div className="section__head">
-          <div className="title-group">
-            <span className="title-bar" />
-            <h2 className="section__title">Permohonan Informasi Saya</h2>
-          </div>
-          <button type="button" className="btn btn--red" onClick={() => dialogs.openRequestForm()}>
-            <FilePenLine size={16} /> Ajukan Permohonan Baru
-          </button>
-        </div>
-        <div className="table" role="table" aria-label="Permohonan informasi">
-          <div className="table__head" role="row">
-            <span role="columnheader">Dataset</span>
-            <span role="columnheader" className="col-160">
-              Diajukan
-            </span>
-            <span role="columnheader" className="col-160">
-              Status
-            </span>
-            <span role="columnheader" className="col-140">
-              Aksi
-            </span>
-          </div>
-          {requests.length === 0 && (
-            <div className="table__empty">
-              Belum ada permohonan. Pilih “Ajukan Permohonan Baru” untuk meminta akses data terbatas.
-            </div>
-          )}
-          {requests.map((r) => (
-            <div className="table__row" role="row" key={r.id}>
-              <span className="table__title" role="cell">
-                {r.title}
-              </span>
-              <span className="table__muted col-160" role="cell">
-                {fmtDate(r.date)}
-              </span>
-              <span className="col-160" role="cell">
-                <StatusBadge status={r.status} />
-              </span>
-              <span className="col-140" role="cell">
-                <button type="button" className="link-btn" onClick={() => requestAction(r)}>
-                  {actionLabel(r)}
-                </button>
-              </span>
-            </div>
           ))}
         </div>
       </section>
