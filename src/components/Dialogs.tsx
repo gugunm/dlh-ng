@@ -10,14 +10,13 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { Calendar, CircleCheck, Clock, Download, FilePenLine, Circle } from 'lucide-react'
 import { Modal } from './Modal'
-import { AccessBadge, StatusBadge } from './Badges'
+import { StatusBadge } from './Badges'
 import { useToast } from './Toast'
 import { CATALOG, itemById, type CatalogItem } from '../data/catalog'
 import { useRequests, type InfoRequest } from '../hooks/useRequests'
 import { downloadTextFile, fmtDate, fmtDateLong, slug } from '../lib/format'
 
 type Dialog =
-  | { kind: 'item'; id: string }
   | { kind: 'form'; itemId?: string }
   | { kind: 'status'; id: string }
   | null
@@ -41,6 +40,7 @@ export const useDialogs = () => {
 export function DialogProvider({ children }: { children: ReactNode }) {
   const [dialog, setDialog] = useState<Dialog>(null)
   const toast = useToast()
+  const navigate = useNavigate()
 
   const close = useCallback(() => setDialog(null), [])
   const downloadItem = useCallback(
@@ -62,123 +62,21 @@ export function DialogProvider({ children }: { children: ReactNode }) {
 
   const api = useMemo<DialogApi>(
     () => ({
-      openItem: (id) => setDialog({ kind: 'item', id }),
+      openItem: (id) => navigate(`/dataset/${id}`),
       openRequestForm: (itemId) => setDialog({ kind: 'form', itemId }),
       openStatus: (id) => setDialog({ kind: 'status', id }),
       downloadItem,
       close,
     }),
-    [downloadItem, close],
+    [downloadItem, close, navigate],
   )
 
   return (
     <DialogContext.Provider value={api}>
       {children}
-      {dialog?.kind === 'item' && <ItemDialog id={dialog.id} />}
       {dialog?.kind === 'form' && <RequestFormDialog itemId={dialog.itemId} />}
       {dialog?.kind === 'status' && <StatusDialog id={dialog.id} />}
     </DialogContext.Provider>
-  )
-}
-
-function ItemDialog({ id }: { id: string }) {
-  const item = itemById(id)
-  const { close, openRequestForm, openStatus, downloadItem } = useDialogs()
-  const { forItem } = useRequests()
-  const navigate = useNavigate()
-  if (!item) return null
-  const req = item.sifat === 'Terbatas' ? forItem(item.id) : undefined
-
-  const searchTag = (tag: string) => {
-    close()
-    navigate(`/dataset?q=${encodeURIComponent(tag)}`)
-  }
-
-  let actions: ReactNode
-  if (item.sifat === 'Terbuka' || req?.status === 'Disetujui') {
-    actions = (
-      <button type="button" className="btn btn--primary" onClick={() => downloadItem(item)}>
-        <Download size={16} /> Unduh Data
-      </button>
-    )
-  } else if (req?.status === 'Diproses') {
-    actions = (
-      <button type="button" className="btn btn--outline" onClick={() => openStatus(req.id)}>
-        <Clock size={16} /> Lihat Status Permohonan
-      </button>
-    )
-  } else if (req?.status === 'Ditolak') {
-    actions = (
-      <>
-        <button type="button" className="btn btn--outline" onClick={() => openStatus(req.id)}>
-          Lihat Alasan
-        </button>
-        <button type="button" className="btn btn--red" onClick={() => openRequestForm(item.id)}>
-          <FilePenLine size={16} /> Ajukan Ulang
-        </button>
-      </>
-    )
-  } else {
-    actions = (
-      <button type="button" className="btn btn--red" onClick={() => openRequestForm(item.id)}>
-        <FilePenLine size={16} /> Ajukan Permohonan
-      </button>
-    )
-  }
-
-  return (
-    <Modal
-      title={item.title}
-      onClose={close}
-      width={640}
-      footer={
-        <>
-          <button type="button" className="btn btn--ghost" onClick={close}>
-            Tutup
-          </button>
-          {actions}
-        </>
-      }
-    >
-      <div className="dlg-meta">
-        <span className="badge badge--blue">{item.type}</span>
-        <AccessBadge sifat={item.sifat} />
-        <span className="dlg-date">
-          <Calendar size={14} /> {fmtDate(item.date)}
-        </span>
-      </div>
-      <p className="dlg-desc">{item.description}</p>
-      {item.sifat === 'Terbatas' && !req && (
-        <p className="dlg-note">
-          Data ini bersifat terbatas. Ajukan permohonan informasi untuk memperoleh akses.
-        </p>
-      )}
-      <dl className="dlg-dl">
-        <div>
-          <dt>Topik</dt>
-          <dd>{item.topik}</dd>
-        </div>
-        <div>
-          <dt>Sumber</dt>
-          <dd>{item.source}</dd>
-        </div>
-        <div>
-          <dt>Tahun data</dt>
-          <dd>{item.tahun}</dd>
-        </div>
-        <div>
-          <dt>Tanggal rilis</dt>
-          <dd>{fmtDateLong(item.date)}</dd>
-        </div>
-      </dl>
-      <div className="tags">
-        {item.tags.map((t) => (
-          <button key={t} type="button" className="tag" onClick={() => searchTag(t)}>
-            {t}
-          </button>
-        ))}
-      </div>
-    </Modal>
   )
 }
 

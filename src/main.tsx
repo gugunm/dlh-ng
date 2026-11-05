@@ -9,6 +9,9 @@ import './styles/base.css'
 import './styles/layout.css'
 import './styles/home.css'
 import './styles/search.css'
+import './styles/detail.css'
+import './styles/roles.css'
+import './styles/masuk.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(

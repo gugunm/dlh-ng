@@ -107,11 +107,17 @@ export const CATALOG: CatalogItem[] = [
   i('pbj-buletin', 'Buletin Pengawasan Pengadaan Edisi Oktober 2026', 'Publikasi', 'Pengadaan Barang/Jasa', 'Terbuka', 2026, '2026-10-14', ['Buletin', 'Pengadaan'], 'Buletin bulanan pengawasan pengadaan barang/jasa pemerintah.'),
   i('pbj-panduan', 'Panduan Reviu Pengadaan Barang/Jasa', 'Produk Pengawasan', 'Pengadaan Barang/Jasa', 'Terbuka', 2024, '2024-08-19', ['Panduan', 'Reviu'], 'Pedoman pelaksanaan reviu pengadaan barang/jasa bagi APIP.'),
 
-  i('ak-audit', 'Rekapitulasi Penugasan Audit Investigatif Tahun 2026', 'Dataset', 'Akuntabilitas Kinerja', 'Terbatas', 2026, '2026-09-30', ['Audit Investigatif', 'Penugasan'], 'Rekapitulasi penugasan audit investigatif menurut jenis penugasan dan unit kerja.'),
+  i('ak-audit', 'Rekapitulasi Penugasan Audit Investigatif Tahun 2026', 'Dataset', 'Akuntabilitas Kinerja', 'Terbatas', 2026, '2026-09-30', ['Audit Investigatif', 'Penugasan'], 'Rekapitulasi penugasan audit investigatif menurut jenis penugasan dan instansi yang ditangani.', 'Investigasi'),
   i('ak-akip', 'Nilai Evaluasi AKIP Kementerian/Lembaga 2025', 'Dataset', 'Akuntabilitas Kinerja', 'Terbuka', 2025, '2026-01-30', ['AKIP', 'Evaluasi'], 'Nilai dan predikat evaluasi akuntabilitas kinerja instansi pemerintah.'),
   i('ak-semester', 'Ikhtisar Hasil Pengawasan Semester I 2026', 'Publikasi', 'Akuntabilitas Kinerja', 'Terbuka', 2026, '2026-10-08', ['Ikhtisar', 'Semester I'], 'Ikhtisar hasil pengawasan BPKP semester I tahun 2026.'),
   i('ak-kinerja', 'Infografis Capaian Kinerja BPKP 2025', 'Infografis', 'Akuntabilitas Kinerja', 'Terbuka', 2025, '2026-02-17', ['Kinerja', 'BPKP'], 'Ringkasan visual capaian kinerja BPKP tahun 2025.'),
   i('ak-lakip', 'Laporan Kinerja Instansi Pemerintah 2025', 'Publikasi', 'Akuntabilitas Kinerja', 'Terbuka', 2025, '2026-03-31', ['LAKIP', 'Kinerja'], 'Laporan kinerja instansi pemerintah tahun 2025.'),
+
+  i('apip-pemda', 'Hasil Penilaian Kapabilitas APIP Pemerintah Daerah', 'Dataset', 'Kapabilitas APIP', 'Terbuka', 2026, '2026-10-12', ['Kapabilitas APIP', 'Pemerintah Daerah'], 'Hasil penilaian level kapabilitas APIP pada pemerintah daerah provinsi, kabupaten, dan kota.'),
+  i('inv-s1', 'Rekapitulasi Hasil Audit Investigatif Semester I 2026', 'Dataset', 'Akuntabilitas Kinerja', 'Terbuka', 2026, '2026-10-14', ['Audit Investigatif', 'Rekapitulasi'], 'Rekapitulasi hasil audit investigatif semester I 2026 menurut jenis penugasan.', 'Investigasi'),
+  i('inv-jumlah', 'Jumlah Penugasan Audit Investigatif Menurut Jenis Instansi', 'Dataset', 'Akuntabilitas Kinerja', 'Terbuka', 2026, '2026-09-30', ['Audit Investigatif', 'Instansi'], 'Jumlah penugasan audit investigatif menurut jenis instansi yang ditangani.', 'Investigasi'),
+  i('inv-tl', 'Perkembangan Tindak Lanjut Hasil Audit Investigatif', 'Dataset', 'Akuntabilitas Kinerja', 'Terbuka', 2026, '2026-09-12', ['Audit Investigatif', 'Tindak Lanjut'], 'Perkembangan tindak lanjut rekomendasi hasil audit investigatif.', 'Investigasi'),
+  i('inv-kerugian', 'Rekapitulasi Penghitungan Kerugian Keuangan Negara', 'Dataset', 'Akuntabilitas Kinerja', 'Terbuka', 2026, '2026-08-28', ['Kerugian Negara', 'Rekapitulasi'], 'Rekapitulasi hasil penghitungan kerugian keuangan negara menurut sektor.', 'Investigasi'),
 ]
 
 export const HOME_FEATURED_IDS = [
