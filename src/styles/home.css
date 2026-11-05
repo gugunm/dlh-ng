@@ -28,14 +28,21 @@
 
 /* ---------- hero ---------- */
 .hero {
-  background: linear-gradient(97.6deg, #1b2253 4.4%, #23277b 95.6%);
+  background: linear-gradient(100deg, #1b2253 5.37%, #23277b 94.63%);
   color: #fff;
 }
 .hero__content {
   display: flex;
   align-items: center;
   gap: 64px;
-  padding: 72px var(--pad) 80px;
+  padding: 56px var(--pad) 24px;
+}
+.hero__mascot {
+  flex: none;
+  width: 400px;
+}
+.hero__stats {
+  padding: 0 var(--pad) 56px;
 }
 .hero__text {
   flex: 1;
@@ -122,10 +129,8 @@
   background: rgba(255, 255, 255, 0.16);
 }
 .stats {
-  width: 520px;
-  flex: none;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 .stat {
@@ -571,8 +576,11 @@
     align-items: stretch;
     gap: 40px;
   }
+  .hero__mascot {
+    display: none;
+  }
   .stats {
-    width: auto;
+    grid-template-columns: 1fr 1fr;
   }
   .topics__row {
     grid-template-columns: repeat(3, 1fr);

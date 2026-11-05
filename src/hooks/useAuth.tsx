@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [state])
 
-  const login = useCallback(() => setState((s) => ({ ...s, authed: true })), [])
+  const login = useCallback(() => setState({ authed: true, role: 'Pengguna Data' }), [])
   const logout = useCallback(() => setState((s) => ({ ...s, authed: false })), [])
   const switchRole = useCallback((role: Role) => setState((s) => ({ ...s, role })), [])
 

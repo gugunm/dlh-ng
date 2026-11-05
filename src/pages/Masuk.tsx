@@ -5,7 +5,7 @@ import whiteLogo from '../assets/bpkp/bpkp-putih-hd.png'
 import logo from '../assets/bpkp/logo-bpkp.png'
 import hadir from '../assets/bpkp/hadir-bermanfaat.png'
 import { useToast } from '../components/Toast'
-import { ROLES, useAuth, type Role } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 
 const REMEMBER_KEY = 'dlh-katalog-remember-v1'
 const readRemembered = () => {
@@ -16,14 +16,8 @@ const readRemembered = () => {
   }
 }
 
-const ROLE_COPY: Record<Role, string> = {
-  Walidata: 'Verifikasi dan validasi data serta pembinaan standar data',
-  'Produsen Data': 'Kelola, unggah, dan perbarui dataset unit kerja',
-  'Pengguna Data': 'Cari dataset dan ajukan permohonan informasi',
-}
-
 export default function Masuk() {
-  const { authed, role, login, switchRole } = useAuth()
+  const { authed, login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const toast = useToast()
@@ -49,7 +43,7 @@ export default function Masuk() {
         /* storage unavailable */
       }
       login()
-      toast.show(`Selamat datang, Sari Wulandari. Anda masuk sebagai ${role}.`, 'success')
+      toast.show(`Selamat datang, Sari Wulandari. Anda masuk sebagai Pengguna Data.`, 'success')
       navigate(from, { replace: true })
     }, 650)
   }
@@ -78,30 +72,9 @@ export default function Masuk() {
             </div>
             <h2>Akses data pengawasan yang akurat dan akuntabel</h2>
             <p className="login__lead">
-              Masuk dengan akun Anda untuk mengakses Katalog Data sesuai peran: Walidata, Produsen Data, atau
-              Pengguna Data.
+              Masuk dengan akun Anda untuk mencari dataset dan mengajukan permohonan informasi di Katalog Data BPKP.
             </p>
           </div>
-          <ul className="login__roles" aria-label="Pilih peran untuk masuk">
-            {ROLES.map(({ role: r, icon: Icon }) => (
-              <li key={r}>
-                <button
-                  type="button"
-                  className={`login-role${r === role ? ' is-active' : ''}`}
-                  aria-pressed={r === role}
-                  onClick={() => switchRole(r)}
-                >
-                  <span className="login-role__icon">
-                    <Icon size={20} />
-                  </span>
-                  <span>
-                    <strong>{r}</strong>
-                    <span>{ROLE_COPY[r]}</span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
         </div>
         <div className="login__brand-bottom">
           <img src={hadir} alt="Hadir Bermanfaat" className="login__hadir" />
@@ -131,20 +104,6 @@ export default function Masuk() {
           <div className="login__heading">
             <h1>Masuk</h1>
             <p>Gunakan akun Katalog Data BPKP Anda untuk melanjutkan.</p>
-            <p className="login__as">
-              Peran: <strong>{role}</strong>
-            </p>
-          </div>
-
-          <div className="field login__role-select">
-            <label className="field__label" htmlFor="login-role">
-              Masuk sebagai
-            </label>
-            <select id="login-role" value={role} onChange={(e) => switchRole(e.target.value as Role)}>
-              {ROLES.map((r) => (
-                <option key={r.role}>{r.role}</option>
-              ))}
-            </select>
           </div>
 
           <div className="field">

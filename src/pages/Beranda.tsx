@@ -22,6 +22,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { TYPE_ICONS, StatusBadge } from '../components/Badges'
+import { Mascot } from '../components/Mascot'
 import { useDialogs } from '../components/Dialogs'
 import { useToast } from '../components/Toast'
 import { CATALOG, CONTENT_TYPES, HOME_FEATURED_IDS, itemById, type CatalogItem } from '../data/catalog'
@@ -228,6 +229,11 @@ export default function Beranda() {
               ))}
             </div>
           </div>
+          <div className="hero__mascot">
+            <Mascot />
+          </div>
+        </div>
+        <div className="hero__stats">
           <div className="stats">
             {STATS.map((s) => {
               const Icon = s.icon

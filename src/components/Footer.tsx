@@ -28,6 +28,8 @@ export function Footer() {
         <div className="footer__sitemap-panel">
           <Link to="/">Beranda</Link>
           <Link to="/dataset">Dataset</Link>
+          <Link to="/produsen">Daftar Produsen</Link>
+          <Link to="/pemanfaatan">Pemanfaatan Data</Link>
           <Link to="/dataset?jenis=Publikasi">Publikasi</Link>
           <Link to="/dataset?jenis=Visualisasi">Visualisasi</Link>
           <Link to={{ pathname: '/', hash: '#permohonan' }}>Permohonan Informasi Saya</Link>
@@ -62,6 +64,8 @@ export function Footer() {
           <div className="footer__links">
             <h4>Katalog Data</h4>
             <Link to="/dataset">Dataset</Link>
+            <Link to="/produsen">Daftar Produsen</Link>
+            <Link to="/pemanfaatan">Pemanfaatan Data</Link>
             <Link to="/dataset?jenis=Publikasi">Publikasi</Link>
             <Link to="/dataset?jenis=Visualisasi">Visualisasi</Link>
             <button type="button" className="footer__link" onClick={() => soon('Panduan Pengguna')}>

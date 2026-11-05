@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate, type To } from 'react-router-dom'
-import { Bell, ChevronsUpDown, CircleCheck, FilePenLine, LogOut, Menu, RotateCcw, Search, User, X } from 'lucide-react'
+import { Bell, ChevronsUpDown, CircleCheck, Database, FilePenLine, House, ListChecks, LogOut, RotateCcw, Search, User, type LucideIcon } from 'lucide-react'
 import logo from '../assets/bpkp/logo-bpkp.png'
 import { usePopover } from '../hooks/usePopover'
 import { useDialogs } from './Dialogs'
@@ -12,30 +12,22 @@ import { ROLES, USER, useAuth, type Role } from '../hooks/useAuth'
 interface NavItem {
   key: string
   label: string
-  to?: To
+  to: To
+  icon?: LucideIcon
 }
 
-const HOME: NavItem = { key: 'beranda', label: 'Beranda', to: '/' }
-const DATASET: NavItem = { key: 'dataset', label: 'Dataset', to: '/dataset' }
-const PUBLIKASI: NavItem = { key: 'publikasi', label: 'Publikasi', to: '/dataset?jenis=Publikasi' }
-const hash = (key: string, label: string): NavItem => ({ key, label, to: { pathname: '/', hash: `#${key}` } })
+/** Shared tabs (Beranda … Pemanfaatan Data); the role-specific item sits on the right of the nav bar. */
+const SHARED: NavItem[] = [
+  { key: 'beranda', label: 'Beranda', to: '/', icon: House },
+  { key: 'dataset', label: 'Dataset', to: '/dataset' },
+  { key: 'produsen', label: 'Daftar Produsen', to: '/produsen' },
+  { key: 'pemanfaatan', label: 'Pemanfaatan Data', to: '/pemanfaatan' },
+]
 
-const NAVS: Record<Role, NavItem[]> = {
-  'Pengguna Data': [
-    HOME,
-    DATASET,
-    PUBLIKASI,
-    { key: 'visualisasi', label: 'Visualisasi', to: '/dataset?jenis=Visualisasi' },
-    hash('permohonan', 'Permohonan Saya'),
-  ],
-  'Produsen Data': [HOME, DATASET, hash('dataset-saya', 'Dataset Saya'), PUBLIKASI, hash('panduan', 'Panduan')],
-  Walidata: [
-    HOME,
-    DATASET,
-    hash('antrean', 'Verifikasi Data'),
-    hash('standar', 'Standar & Metadata'),
-    { key: 'produsen', label: 'Daftar Produsen' },
-  ],
+const ROLE_NAV: Record<Role, NavItem> = {
+  'Pengguna Data': { key: 'role', label: 'Permohonan Saya', to: { pathname: '/', hash: '#permohonan' }, icon: FilePenLine },
+  'Produsen Data': { key: 'role', label: 'Dataset Saya', to: { pathname: '/', hash: '#dataset-saya' }, icon: Database },
+  Walidata: { key: 'role', label: 'Verifikasi Data', to: { pathname: '/', hash: '#antrean' }, icon: ListChecks },
 }
 
 const POPULAR = ['SPIP', 'Kapabilitas APIP', 'Dana Desa', 'Pengadaan']
@@ -64,32 +56,30 @@ const NOTIFICATIONS = [
   },
 ] as const
 
-function useActiveNav(items: NavItem[]): string {
-  const { pathname, hash, search } = useLocation()
-  const has = (k: string) => items.some((n) => n.key === k)
-  if (pathname === '/') {
-    const k = hash.slice(1)
-    return k && has(k) ? k : 'beranda'
-  }
-  const jenis = new URLSearchParams(search).getAll('jenis')
-  if (pathname === '/dataset' && jenis.length === 1) {
-    const k = jenis[0].toLowerCase()
-    if ((k === 'publikasi' || k === 'visualisasi') && has(k)) return k
-  }
+const ROLE_HASH: Record<Role, string> = {
+  'Pengguna Data': '#permohonan',
+  'Produsen Data': '#dataset-saya',
+  Walidata: '#antrean',
+}
+
+function useActiveNav(role: Role): string {
+  const { pathname, hash } = useLocation()
+  if (pathname === '/') return hash === ROLE_HASH[role] ? 'role' : 'beranda'
+  if (pathname.startsWith('/produsen')) return 'produsen'
+  if (pathname.startsWith('/pemanfaatan')) return 'pemanfaatan'
   return 'dataset'
 }
 
 export function Header() {
   const { role, switchRole, logout } = useAuth()
-  const nav = NAVS[role]
-  const active = useActiveNav(nav)
+  const roleNav = ROLE_NAV[role]
+  const active = useActiveNav(role)
   const navigate = useNavigate()
   const toast = useToast()
   const dialogs = useDialogs()
   const { reset } = useRequests()
   const workflow = useWorkflow()
 
-  const menu = usePopover()
   const search = usePopover()
   const bell = usePopover()
   const user = usePopover()
@@ -117,32 +107,21 @@ export function Header() {
     else dialogs.openStatus(n.target.id)
   }
 
-  const navLink = (n: NavItem, className: string, isActive: boolean, after?: () => void, r?: string) =>
-    n.to ? (
+  const tab = (n: NavItem, isRole = false) => {
+    const Icon = n.icon
+    const isActive = active === n.key
+    return (
       <Link
         key={n.key}
         to={n.to}
-        role={r}
-        className={className}
+        className={`nav-bar__item${isRole ? ' nav-bar__item--role' : ''}${isActive ? ' is-active' : ''}`}
         aria-current={isActive ? 'page' : undefined}
-        onClick={after}
       >
+        {Icon && <Icon size={18} aria-hidden="true" />}
         {n.label}
       </Link>
-    ) : (
-      <button
-        key={n.key}
-        type="button"
-        role={r}
-        className={className}
-        onClick={() => {
-          after?.()
-          toast.show(`Halaman “${n.label}” belum tersedia pada prototipe ini.`, 'info')
-        }}
-      >
-        {n.label}
-      </button>
     )
+  }
 
   const chooseRole = (next: Role) => {
     user.close()
@@ -170,10 +149,6 @@ export function Header() {
             <span>Badan Pengawasan Keuangan dan Pembangunan</span>
           </span>
         </Link>
-
-        <nav className="nav" aria-label="Navigasi utama">
-          {nav.map((n) => navLink(n, `nav__link${active === n.key ? ' is-active' : ''}`, active === n.key, undefined))}
-        </nav>
 
         <div className="actions">
           <div className="popover search-pop" ref={search.ref}>
@@ -349,25 +324,14 @@ export function Header() {
               </div>
             )}
           </div>
-
-          <div className="popover header__burger" ref={menu.ref}>
-            <button
-              type="button"
-              className="round-btn"
-              aria-label="Menu"
-              aria-expanded={menu.open}
-              onClick={menu.toggle}
-            >
-              {menu.open ? <X size={18} /> : <Menu size={18} />}
-            </button>
-            {menu.open && (
-              <div className="popover__panel popover__panel--menu" role="menu">
-                {nav.map((n) => navLink(n, active === n.key ? 'is-active' : '', active === n.key, menu.close, 'menuitem'))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
+      <nav className="nav-bar" aria-label="Navigasi utama">
+        <div className="nav-bar__inner">
+          <div className="nav-bar__left">{SHARED.map((n) => tab(n))}</div>
+          {tab(roleNav, true)}
+        </div>
+      </nav>
     </header>
   )
 }

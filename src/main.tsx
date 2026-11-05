@@ -12,6 +12,7 @@ import './styles/search.css'
 import './styles/detail.css'
 import './styles/roles.css'
 import './styles/masuk.css'
+import './styles/lists.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(
