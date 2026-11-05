@@ -330,19 +330,19 @@
 .footer__brand {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  width: 220px;
+  gap: 10px;
+  width: 136px;
   flex: none;
 }
 .footer__logo {
-  width: 180px;
-  height: 90px;
+  width: 116px;
+  height: 58px;
   object-fit: contain;
   object-position: left;
 }
 .footer__hadir {
-  width: 200px;
-  height: 40px;
+  width: 130px;
+  height: 26px;
   object-fit: contain;
   object-position: left;
 }

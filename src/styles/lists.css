@@ -418,6 +418,9 @@ button.pager__page:hover {
     flex-direction: column;
     align-items: stretch;
   }
+  .list-search .input-box {
+    flex: none;
+  }
   .producer {
     padding: 14px;
     gap: 12px;
