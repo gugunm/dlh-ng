@@ -32,3 +32,7 @@ Then open <http://localhost:5173>. If you are signed out, enter any 18-digit NIP
 | `pnpm dev`     | Start the development server on port 5173         |
 | `pnpm build`   | Type-check the code and build to `dist/`          |
 | `pnpm preview` | Serve the production build locally (run `build` first) |
+
+## Created by
+
+this prototipe crafted by [@gugunm](https://gugunmediamer.com)
