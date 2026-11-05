@@ -33,6 +33,6 @@ Then open <http://localhost:5173>. If you are signed out, enter any 18-digit NIP
 | `pnpm build`   | Type-check the code and build to `dist/`          |
 | `pnpm preview` | Serve the production build locally (run `build` first) |
 
-## Created by
+## Creator
 
-this prototipe crafted by [@gugunm](https://gugunmediamer.com)
+the prototype crafted by [@gugunm](https://gugunmediamer.com)
